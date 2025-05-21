@@ -3,6 +3,14 @@ ARG BROWSER_IMAGE_BASE=webrecorder/browsertrix-browser-base:brave-${BROWSER_VERS
 
 FROM ${BROWSER_IMAGE_BASE}
 
+# browsertrix GUI + crawler
+FROM webrecorder/browsertrix-crawler:latest
+
+# Browsertrix already exposes port 3000 and defines CMD
+# No changes needed; we add just a label for Render health checks
+LABEL org.renderhealthcheck="wget -qO- http://localhost:3000 || exit 1"
+
+
 # needed to add args to main build stage
 ARG BROWSER_VERSION
 
@@ -53,6 +61,7 @@ RUN ln -s /app/dist/main.js /usr/bin/crawl; \
 RUN mkdir -p /app/behaviors
 
 WORKDIR /crawls
+
 
 # enable to test custom behaviors build (from browsertrix-behaviors)
 # COPY behaviors.js /app/node_modules/browsertrix-behaviors/dist/behaviors.js
